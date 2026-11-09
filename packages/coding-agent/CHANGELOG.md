@@ -113,6 +113,7 @@
 - Fixed MCP stdio server subprocesses surviving disconnect or pi exit on POSIX when the server's main process had already exited ([#11721](https://github.com/earendil-works/pi/issues/11721))
 - Fixed MCP Streamable HTTP JSON replies bypassing message-size limits and HTTP errors buffering entire response bodies. Oversized replies and error-body content beyond the first 8 KiB are now cancelled ([#11335](https://github.com/earendil-works/pi/issues/11335))
 - Fixed valid tool arguments being rejected when their schema combined local `$ref`s with a relative root `$id`, such as `schemas/tool.json` ([#11697](https://github.com/earendil-works/pi/issues/11697))
+- Fixed `enabledModels`/`--models` warnings such as `No models match pattern "github-copilot/nope"` being written over the interactive TUI on every `/new`, `/resume` and `/fork`, which left stale lines in fullscreen mode. The warnings are now shown once at startup, in the chat in interactive mode and on stderr in other modes; RPC mode no longer repeats them on stderr for each `new_session`, `switch_session` or `fork` ([#11264](https://github.com/earendil-works/pi/issues/11264))
 
 ## [1.5.0] - 2026-11-02
 
