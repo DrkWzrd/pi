@@ -34,23 +34,25 @@ function getBashShellConfig(shell: string): ShellConfig {
  */
 function expandEnvInPath(path: string): string {
 	if (process.platform === "win32") {
+		const env = new Map(
+			Object.entries(process.env).map(([key, value]) => [
+				key.toLowerCase(),
+				value,
+			]),
+		);
+
 		return path.replace(/%([A-Za-z_][A-Za-z0-9_]*)%/g, (match, name: string) => {
-			const lower = name.toLowerCase();
-			for (const [key, value] of Object.entries(process.env)) {
-				if (key.toLowerCase() === lower) return value ?? match;
-			}
-			return match;
+			return env.get(name.toLowerCase()) ?? match;
 		});
 	}
+
 	return path.replace(
 		/\$\{([A-Za-z_][A-Za-z0-9_]*)\}|\$([A-Za-z_][A-Za-z0-9_]*)/g,
 		(match, braced: string | undefined, bare: string | undefined) => {
-			const value = process.env[braced ?? bare!];
-			return value ?? match;
+			return process.env[braced ?? bare!] ?? match;
 		},
 	);
 }
-
 // Matches harness-v2's pathExists (packages/durable/src/env/node.ts).
 // On Unix this is identical to existsSync() (both are access(F_OK)), just
 // spelled with try/catch. On Windows we explicitly avoid existsSync(): its
